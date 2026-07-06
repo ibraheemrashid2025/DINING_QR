@@ -6,7 +6,7 @@ function getRequiredEnv(name: keyof ImportMetaEnv): string {
   const value = import.meta.env[name];
 
   if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
+    return 'http://localhost:5000/api';
   }
 
   return value;
@@ -15,4 +15,3 @@ function getRequiredEnv(name: keyof ImportMetaEnv): string {
 export const env: ClientEnv = {
   apiBaseUrl: getRequiredEnv('VITE_API_BASE_URL'),
 };
-

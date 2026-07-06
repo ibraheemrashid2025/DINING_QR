@@ -1,6 +1,7 @@
 node_modules
 dist
 build
+*.tsbuildinfo
 .env
 .env.local
 .env.*.local
@@ -12,4 +13,3 @@ yarn-error.log*
 pnpm-debug.log*
 .vercel
 .railway
-
