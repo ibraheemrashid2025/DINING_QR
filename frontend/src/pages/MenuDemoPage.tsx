@@ -23,6 +23,7 @@ export function MenuDemoPage() {
   const [cart, setCart] = useState<Record<string, CartLine>>({});
   const [customerName, setCustomerName] = useState('');
   const [notes, setNotes] = useState('');
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
 
   const filteredItems = useMemo(
@@ -90,10 +91,85 @@ export function MenuDemoPage() {
       })),
     });
     setIsSuccessOpen(true);
+    setIsCartOpen(false);
     setCart({});
     setCustomerName('');
     setNotes('');
   };
+
+  const renderCartContent = (fieldIdSuffix: string) => (
+    <>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">Your cart</p>
+          <h2 className="text-xl font-bold text-stone-50 sm:text-2xl">Table {tableToken.tableNumber}</h2>
+        </div>
+        <span className="rounded-full bg-orange-500/15 px-3 py-1 text-sm font-bold text-orange-200">
+          {itemCount} items
+        </span>
+      </div>
+
+      <div className="mt-4 max-h-44 space-y-3 overflow-y-auto pr-1 sm:mt-5 sm:max-h-none">
+        {cartLines.length > 0 ? (
+          cartLines.map((line) => (
+            <div className="rounded-xl bg-black/30 p-3" key={line.item.id}>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="font-semibold text-stone-50">{line.item.name}</p>
+                  <p className="text-sm text-stone-400">{formatCurrency(line.item.price)}</p>
+                </div>
+                <QuantityControl
+                  onDecrease={() => updateQuantity(line.item, line.quantity - 1)}
+                  onIncrease={() => updateQuantity(line.item, line.quantity + 1)}
+                  quantity={line.quantity}
+                />
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="rounded-xl bg-black/30 p-4 text-sm text-stone-400">
+            Your selected items will appear here.
+          </p>
+        )}
+      </div>
+
+      <label className="mt-5 block text-sm font-semibold text-stone-300" htmlFor={`customer-name-${fieldIdSuffix}`}>
+        Customer name
+      </label>
+      <input
+        className="mt-2 w-full rounded-xl border border-stone-800 bg-black/30 p-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-orange-500"
+        id={`customer-name-${fieldIdSuffix}`}
+        onChange={(event) => setCustomerName(event.target.value)}
+        placeholder="Name for the order"
+        type="text"
+        value={customerName}
+      />
+
+      <label className="mt-5 block text-sm font-semibold text-stone-300" htmlFor={`order-notes-${fieldIdSuffix}`}>
+        Order notes
+      </label>
+      <textarea
+        className="mt-2 min-h-24 w-full rounded-xl border border-stone-800 bg-black/30 p-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-orange-500"
+        id={`order-notes-${fieldIdSuffix}`}
+        onChange={(event) => setNotes(event.target.value)}
+        placeholder="Allergies, spice level, serving instructions..."
+        value={notes}
+      />
+
+      <div className="mt-5 flex items-center justify-between border-t border-stone-800 pt-5">
+        <span className="font-semibold text-stone-300">Subtotal</span>
+        <span className="text-xl font-bold text-orange-300">{formatCurrency(subtotal)}</span>
+      </div>
+      <button
+        className="mt-5 w-full rounded-full bg-orange-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-orange-950/40 hover:bg-orange-500 disabled:cursor-not-allowed disabled:bg-stone-700"
+        disabled={itemCount === 0}
+        onClick={placeOrder}
+        type="button"
+      >
+        Checkout / Place Order
+      </button>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-[#0b0908] text-stone-50">
@@ -134,7 +210,7 @@ export function MenuDemoPage() {
         </div>
       </section>
 
-      <main className="mx-auto grid max-w-7xl gap-6 px-3 pb-5 pt-4 sm:px-4 sm:pt-6 lg:grid-cols-[1fr_390px] lg:pb-10">
+      <main className="mx-auto grid max-w-7xl gap-6 px-3 pb-28 pt-4 sm:px-4 sm:pt-6 lg:grid-cols-[1fr_390px] lg:pb-10">
         <section>
           <div className="sticky top-0 z-20 -mx-3 border-b border-orange-900/40 bg-[#0b0908]/95 px-3 py-3 backdrop-blur sm:-mx-4 sm:px-4 sm:py-4">
             <div className="no-scrollbar flex gap-2 overflow-x-auto pb-2">
@@ -231,80 +307,52 @@ export function MenuDemoPage() {
           )}
         </section>
 
-        <aside className="sticky bottom-3 z-30 max-h-[72vh] overflow-y-auto rounded-3xl border border-orange-900/40 bg-[#17110f]/95 p-4 shadow-2xl shadow-black/50 backdrop-blur sm:p-5 lg:top-6 lg:max-h-none lg:rounded-2xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">Your cart</p>
-              <h2 className="text-xl font-bold text-stone-50 sm:text-2xl">Table {tableToken.tableNumber}</h2>
-            </div>
-            <span className="rounded-full bg-orange-500/15 px-3 py-1 text-sm font-bold text-orange-200">
-              {itemCount} items
-            </span>
-          </div>
-
-          <div className="mt-4 max-h-44 space-y-3 overflow-y-auto pr-1 sm:mt-5 sm:max-h-none">
-            {cartLines.length > 0 ? (
-              cartLines.map((line) => (
-                <div className="rounded-xl bg-black/30 p-3" key={line.item.id}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-semibold text-stone-50">{line.item.name}</p>
-                      <p className="text-sm text-stone-400">{formatCurrency(line.item.price)}</p>
-                    </div>
-                    <QuantityControl
-                      onDecrease={() => updateQuantity(line.item, line.quantity - 1)}
-                      onIncrease={() => updateQuantity(line.item, line.quantity + 1)}
-                      quantity={line.quantity}
-                    />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="rounded-xl bg-black/30 p-4 text-sm text-stone-400">
-                Your selected items will appear here.
-              </p>
-            )}
-          </div>
-
-          <label className="mt-5 block text-sm font-semibold text-stone-300" htmlFor="customer-name">
-            Customer name
-          </label>
-          <input
-            className="mt-2 w-full rounded-xl border border-stone-800 bg-black/30 p-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-orange-500"
-            id="customer-name"
-            onChange={(event) => setCustomerName(event.target.value)}
-            placeholder="Name for the order"
-            type="text"
-            value={customerName}
-          />
-
-          <label className="mt-5 block text-sm font-semibold text-stone-300" htmlFor="order-notes">
-            Order notes
-          </label>
-          <textarea
-            className="mt-2 min-h-24 w-full rounded-xl border border-stone-800 bg-black/30 p-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-orange-500"
-            id="order-notes"
-            onChange={(event) => setNotes(event.target.value)}
-            placeholder="Allergies, spice level, serving instructions..."
-            value={notes}
-          />
-
-          <div className="mt-5 flex items-center justify-between border-t border-stone-800 pt-5">
-            <span className="font-semibold text-stone-300">Subtotal</span>
-            <span className="text-xl font-bold text-orange-300">{formatCurrency(subtotal)}</span>
-          </div>
-          <button
-            className="mt-5 w-full rounded-full bg-orange-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-orange-950/40 hover:bg-orange-500 disabled:cursor-not-allowed disabled:bg-stone-700"
-            disabled={itemCount === 0}
-            onClick={placeOrder}
-            type="button"
-          >
-            Checkout / Place Order
-          </button>
+        <aside className="hidden h-fit rounded-2xl border border-orange-900/40 bg-[#17110f]/95 p-5 shadow-2xl shadow-black/30 backdrop-blur lg:sticky lg:top-6 lg:block">
+          {renderCartContent('desktop')}
         </aside>
       </main>
 
+      <button
+        className="fixed inset-x-3 bottom-3 z-40 flex items-center justify-between rounded-full border border-orange-400/30 bg-orange-600 px-5 py-4 font-bold text-white shadow-2xl shadow-black/60 lg:hidden"
+        onClick={() => setIsCartOpen(true)}
+        type="button"
+      >
+        <span>Cart ({itemCount})</span>
+        <span>{formatCurrency(subtotal)}</span>
+      </button>
+
       <AnimatePresence>
+        {isCartOpen ? (
+          <motion.div
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 flex items-end bg-black/70 p-0 lg:hidden"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            onClick={() => setIsCartOpen(false)}
+          >
+            <motion.div
+              animate={{ y: 0 }}
+              className="max-h-[86vh] w-full overflow-y-auto rounded-t-3xl border border-orange-900/40 bg-[#17110f] p-4 pb-6 shadow-2xl"
+              exit={{ y: '100%' }}
+              initial={{ y: '100%' }}
+              onClick={(event) => event.stopPropagation()}
+              transition={{ damping: 28, stiffness: 260, type: 'spring' }}
+            >
+              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-stone-700" />
+              <div className="mb-3 flex justify-end">
+                <button
+                  className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-200"
+                  onClick={() => setIsCartOpen(false)}
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+              {renderCartContent('mobile')}
+            </motion.div>
+          </motion.div>
+        ) : null}
+
         {isSuccessOpen ? (
           <motion.div
             animate={{ opacity: 1 }}
