@@ -28,12 +28,15 @@ export function MenuDemoPage() {
   const filteredItems = useMemo(
     () =>
       menuItems.filter((item) => {
+        const categoryName =
+          menuCategories.find((category) => category.id === item.categoryId)?.name ?? '';
         const matchesCategory = item.categoryId === activeCategory;
         const query = searchTerm.trim().toLowerCase();
         const matchesSearch =
           query.length === 0 ||
           item.name.toLowerCase().includes(query) ||
-          item.description.toLowerCase().includes(query);
+          item.description.toLowerCase().includes(query) ||
+          categoryName.toLowerCase().includes(query);
 
         return matchesCategory && matchesSearch;
       }),
@@ -159,8 +162,9 @@ export function MenuDemoPage() {
             />
           </div>
 
-          <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-            {filteredItems.map((item) => {
+          {filteredItems.length > 0 ? (
+            <div className="mt-4 grid gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+              {filteredItems.map((item) => {
               const quantity = cart[item.id]?.quantity ?? 0;
 
               return (
@@ -214,8 +218,17 @@ export function MenuDemoPage() {
                   </div>
                 </motion.article>
               );
-            })}
-          </div>
+              })}
+            </div>
+          ) : (
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 rounded-2xl border border-stone-800 bg-[#17110f] p-8 text-center shadow-xl shadow-black/20 sm:mt-6"
+              initial={{ opacity: 0, y: 12 }}
+            >
+              <p className="text-lg font-bold text-stone-50">No items found</p>
+            </motion.div>
+          )}
         </section>
 
         <aside className="sticky bottom-3 z-30 max-h-[72vh] overflow-y-auto rounded-3xl border border-orange-900/40 bg-[#17110f]/95 p-4 shadow-2xl shadow-black/50 backdrop-blur sm:p-5 lg:top-6 lg:max-h-none lg:rounded-2xl">
