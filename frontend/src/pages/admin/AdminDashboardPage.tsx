@@ -1,20 +1,52 @@
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 
 import { AdminCard } from '../../components/admin/AdminCard';
 import { AdminPageHeader } from '../../components/admin/AdminPageHeader';
 import { useAdminMock } from '../../contexts/useAdminMock';
-import { getDemoOrders } from '../../data/mockOrderStorage';
+import { getDemoOrders, updateDemoOrderStatus } from '../../data/mockOrderStorage';
+import { OrderStatus } from '../../types/demo';
 import { formatCurrency } from '../../utils/format';
+
+const orderStatuses: OrderStatus[] = ['accepted', 'preparing', 'ready', 'completed'];
 
 export function AdminDashboardPage() {
   const { branches, categories, menuItems, tables } = useAdminMock();
-  const orders = getDemoOrders();
+  const [orders, setOrders] = useState<Awaited<ReturnType<typeof getDemoOrders>>>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadOrders = async () => {
+      const nextOrders = await getDemoOrders();
+      if (isMounted) {
+        setOrders(nextOrders);
+      }
+    };
+
+    void loadOrders();
+    const intervalId = window.setInterval(() => {
+      void loadOrders();
+    }, 2000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
   const stats = [
     { label: 'Total Categories', value: categories.length },
     { label: 'Total Menu Items', value: menuItems.length },
     { label: 'Total Tables', value: tables.length },
     { label: 'Total Branches', value: branches.length },
   ];
+
+  const updateStatus = (orderId: string, status: OrderStatus) => {
+    void updateDemoOrderStatus(orderId, status);
+    setOrders((current) =>
+      current.map((order) => (order.orderId === orderId ? { ...order, status } : order)),
+    );
+  };
 
   return (
     <>
@@ -54,10 +86,10 @@ export function AdminDashboardPage() {
           <div className="mt-5 space-y-3">
             {orders.length > 0 ? (
               orders.map((order) => (
-                <div className="rounded-xl border border-stone-800 bg-black/25 p-4" key={order.id}>
+                <div className="rounded-xl border border-stone-800 bg-black/25 p-4" key={order.orderId}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-stone-100">{order.id}</p>
+                      <p className="font-semibold text-stone-100">{order.orderId}</p>
                       <p className="text-sm text-stone-500">{order.branchName}</p>
                     </div>
                     <span className="rounded-full bg-orange-500/15 px-3 py-1 text-xs font-bold capitalize text-orange-200">
@@ -75,6 +107,18 @@ export function AdminDashboardPage() {
                       label="Items"
                       value={order.items.map((item) => `${item.name} x${item.quantity}`).join(', ')}
                     />
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {orderStatuses.map((status) => (
+                      <button
+                        className="rounded-full border border-stone-700 px-3 py-2 text-xs font-semibold capitalize text-stone-300 hover:border-orange-500 hover:text-orange-200"
+                        key={status}
+                        onClick={() => updateStatus(order.orderId, status)}
+                        type="button"
+                      >
+                        {status}
+                      </button>
+                    ))}
                   </div>
                 </div>
               ))

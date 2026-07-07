@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DashboardShell } from '../components/demo/DashboardShell';
 import { OrderCard } from '../components/demo/OrderCard';
@@ -7,16 +7,35 @@ import { getDemoOrders, updateDemoOrderStatus } from '../data/mockOrderStorage';
 import { MockOrder, OrderStatus } from '../types/demo';
 
 export function KitchenDemoPage() {
-  const [orders, setOrders] = useState<MockOrder[]>(
-    () => getDemoOrders().filter((order) => order.status !== 'completed'),
-  );
+  const [orders, setOrders] = useState<MockOrder[]>([]);
 
   const updateStatus = (orderId: string, status: OrderStatus) => {
-    updateDemoOrderStatus(orderId, status);
+    void updateDemoOrderStatus(orderId, status);
     setOrders((current) =>
-      current.map((order) => (order.id === orderId ? { ...order, status } : order)),
+      current.map((order) => (order.orderId === orderId ? { ...order, status } : order)),
     );
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadOrders = async () => {
+      const nextOrders = (await getDemoOrders()).filter((order) => order.status !== 'completed');
+      if (isMounted) {
+        setOrders(nextOrders);
+      }
+    };
+
+    void loadOrders();
+    const intervalId = window.setInterval(() => {
+      void loadOrders();
+    }, 2000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <DashboardShell eyebrow="Kitchen display" title="Prep Queue">
@@ -38,7 +57,7 @@ export function KitchenDemoPage() {
       </div>
       <motion.div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" layout>
         {orders.map((order) => (
-          <OrderCard key={order.id} onStatusChange={updateStatus} order={order} variant="kitchen" />
+          <OrderCard key={order.orderId} onStatusChange={updateStatus} order={order} variant="kitchen" />
         ))}
       </motion.div>
     </DashboardShell>

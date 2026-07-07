@@ -66,13 +66,13 @@ export function MenuDemoPage() {
     });
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (itemCount === 0) {
       return;
     }
 
-    saveDemoOrder({
-      id: `ORD-${Date.now().toString().slice(-6)}`,
+    await saveDemoOrder({
+      orderId: `ORD-${Date.now().toString().slice(-6)}`,
       tableId: tableToken.id,
       tableNumber: tableToken.tableNumber,
       branchId: tableToken.branchId,
@@ -163,7 +163,7 @@ export function MenuDemoPage() {
       <button
         className="mt-5 w-full rounded-full bg-orange-600 px-5 py-3.5 font-bold text-white shadow-lg shadow-orange-950/40 hover:bg-orange-500 disabled:cursor-not-allowed disabled:bg-stone-700"
         disabled={itemCount === 0}
-        onClick={placeOrder}
+            onClick={() => void placeOrder()}
         type="button"
       >
         Checkout / Place Order

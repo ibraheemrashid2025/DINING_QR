@@ -50,7 +50,7 @@ export type MockOrderItem = {
 };
 
 export type MockOrder = {
-  id: string;
+  orderId: string;
   tableId: string;
   tableNumber: number;
   branchId: string;

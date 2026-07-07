@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DashboardShell } from '../components/demo/DashboardShell';
 import { OrderCard } from '../components/demo/OrderCard';
@@ -7,13 +7,34 @@ import { getDemoOrders, updateDemoOrderStatus } from '../data/mockOrderStorage';
 import { MockOrder, OrderStatus } from '../types/demo';
 
 export function CounterDemoPage() {
-  const [orders, setOrders] = useState<MockOrder[]>(() => getDemoOrders());
+  const [orders, setOrders] = useState<MockOrder[]>([]);
   const newOrders = orders.filter((order) => order.status === 'new').length;
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadOrders = async () => {
+      const nextOrders = await getDemoOrders();
+      if (isMounted) {
+        setOrders(nextOrders);
+      }
+    };
+
+    void loadOrders();
+    const intervalId = window.setInterval(() => {
+      void loadOrders();
+    }, 2000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
   const updateStatus = (orderId: string, status: OrderStatus) => {
-    updateDemoOrderStatus(orderId, status);
+    void updateDemoOrderStatus(orderId, status);
     setOrders((current) =>
-      current.map((order) => (order.id === orderId ? { ...order, status } : order)),
+      current.map((order) => (order.orderId === orderId ? { ...order, status } : order)),
     );
   };
 
@@ -30,7 +51,7 @@ export function CounterDemoPage() {
       </div>
       <motion.div className="grid gap-5 lg:grid-cols-2" layout>
         {orders.map((order) => (
-          <OrderCard key={order.id} onStatusChange={updateStatus} order={order} />
+          <OrderCard key={order.orderId} onStatusChange={updateStatus} order={order} />
         ))}
       </motion.div>
     </DashboardShell>

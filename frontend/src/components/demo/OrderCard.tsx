@@ -17,7 +17,7 @@ export function OrderCard({ order, variant = 'counter', onStatusChange }: OrderC
     <article className={`rounded-2xl border bg-[#17110f] p-5 shadow-xl shadow-black/20 ${isKitchen ? 'border-orange-800/60' : 'border-stone-800'}`}>
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-orange-300">{order.id}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-orange-300">{order.orderId}</p>
           <h3 className="mt-1 text-2xl font-bold text-stone-50">Table {order.tableNumber}</h3>
           <p className="mt-1 text-sm text-stone-400">{order.branchName}</p>
           <p className="mt-1 text-sm text-stone-400">{order.createdAt}</p>
@@ -59,7 +59,7 @@ export function OrderCard({ order, variant = 'counter', onStatusChange }: OrderC
           <button
             className="rounded-full border border-stone-700 px-3 py-2 text-xs font-semibold capitalize text-stone-300 hover:border-orange-500 hover:text-orange-200"
             key={status}
-            onClick={() => onStatusChange?.(order.id, status)}
+            onClick={() => onStatusChange?.(order.orderId, status)}
             type="button"
           >
             {status}
