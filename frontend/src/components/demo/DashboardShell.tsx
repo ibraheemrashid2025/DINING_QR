@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
+import { SteakhouseLogo } from '../brand/SteakhouseLogo';
+
 type DashboardShellProps = {
   title: string;
   eyebrow: string;
@@ -9,7 +11,7 @@ type DashboardShellProps = {
 };
 
 const navItems = [
-  { label: 'Menu', to: '/menu?table=5' },
+  { label: 'Menu', to: '/menu/t/demo-table-1' },
   { label: 'Counter', to: '/counter' },
   { label: 'Kitchen', to: '/kitchen' },
   { label: 'Admin', to: '/admin' },
@@ -18,16 +20,16 @@ const navItems = [
 export function DashboardShell({ title, eyebrow, children, sidebar = false }: DashboardShellProps) {
   if (sidebar) {
     return (
-      <div className="min-h-screen bg-slate-100 text-slate-950 lg:flex">
-        <aside className="border-b border-slate-200 bg-slate-950 p-5 text-white lg:min-h-screen lg:w-72 lg:border-b-0">
-          <Link className="text-lg font-bold" to="/">
-            Casa Lumiere OS
+      <div className="min-h-screen bg-[#0b0908] text-stone-50 lg:flex">
+        <aside className="border-b border-orange-900/40 bg-black p-5 text-white lg:min-h-screen lg:w-72 lg:border-b-0">
+          <Link className="inline-flex" to="/">
+            <SteakhouseLogo compact />
           </Link>
           <nav className="mt-8 grid gap-2">
             {navItems.map((item) => (
               <NavLink
                 className={({ isActive }) =>
-                  `rounded-md px-3 py-2 text-sm font-medium ${isActive ? 'bg-white text-slate-950' : 'text-slate-300 hover:bg-white/10'}`
+                  `rounded-md px-3 py-2 text-sm font-medium ${isActive ? 'bg-orange-600 text-white' : 'text-stone-300 hover:bg-white/10'}`
                 }
                 key={item.to}
                 to={item.to}
@@ -46,17 +48,17 @@ export function DashboardShell({ title, eyebrow, children, sidebar = false }: Da
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-950">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4">
-          <Link className="text-lg font-bold text-slate-950" to="/">
-            Casa Lumiere OS
+    <div className="min-h-screen bg-[#0b0908] text-stone-50">
+      <header className="sticky top-0 z-20 border-b border-orange-900/40 bg-black/85 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-col items-stretch gap-3 px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-4">
+          <Link className="inline-flex" to="/">
+            <SteakhouseLogo compact />
           </Link>
-          <nav className="flex flex-wrap gap-2">
+          <nav className="no-scrollbar flex gap-2 overflow-x-auto">
             {navItems.map((item) => (
               <NavLink
                 className={({ isActive }) =>
-                  `rounded-full px-3 py-2 text-sm font-semibold ${isActive ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-700'}`
+                  `shrink-0 rounded-full px-3 py-2 text-sm font-semibold ${isActive ? 'bg-orange-600 text-white' : 'bg-[#17110f] text-stone-300'}`
                 }
                 key={item.to}
                 to={item.to}
@@ -67,7 +69,7 @@ export function DashboardShell({ title, eyebrow, children, sidebar = false }: Da
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="mx-auto max-w-7xl px-3 py-5 sm:px-4 sm:py-8">
         <Header eyebrow={eyebrow} title={title} />
         {children}
       </main>
@@ -78,9 +80,8 @@ export function DashboardShell({ title, eyebrow, children, sidebar = false }: Da
 function Header({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <div className="mb-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">{eyebrow}</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">{title}</h1>
+      <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">{eyebrow}</p>
+      <h1 className="mt-2 text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">{title}</h1>
     </div>
   );
 }
-

@@ -3,14 +3,15 @@ import { useState } from 'react';
 
 import { DashboardShell } from '../components/demo/DashboardShell';
 import { OrderCard } from '../components/demo/OrderCard';
-import { mockOrders } from '../data/mockData';
+import { getDemoOrders, updateDemoOrderStatus } from '../data/mockOrderStorage';
 import { MockOrder, OrderStatus } from '../types/demo';
 
 export function CounterDemoPage() {
-  const [orders, setOrders] = useState<MockOrder[]>(mockOrders);
+  const [orders, setOrders] = useState<MockOrder[]>(() => getDemoOrders());
   const newOrders = orders.filter((order) => order.status === 'new').length;
 
   const updateStatus = (orderId: string, status: OrderStatus) => {
+    updateDemoOrderStatus(orderId, status);
     setOrders((current) =>
       current.map((order) => (order.id === orderId ? { ...order, status } : order)),
     );
@@ -19,11 +20,11 @@ export function CounterDemoPage() {
   return (
     <DashboardShell eyebrow="Counter operations" title="Incoming Orders">
       <div className="mb-6 grid gap-4 md:grid-cols-3">
-        <SummaryCard label="Incoming" value={newOrders.toString()} tone="amber" />
-        <SummaryCard label="In progress" value="7" tone="sky" />
-        <SummaryCard label="Sound indicator" value={newOrders > 0 ? 'On' : 'Idle'} tone="emerald" />
+        <SummaryCard label="Incoming" value={newOrders.toString()} />
+        <SummaryCard label="In progress" value={orders.filter((order) => order.status === 'preparing').length.toString()} />
+        <SummaryCard label="Sound indicator" value={newOrders > 0 ? 'On' : 'Idle'} />
       </div>
-      <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
+      <div className="mb-6 rounded-2xl border border-orange-800/50 bg-orange-500/10 p-4 text-orange-100">
         <span className="font-bold">Notification UI:</span> {newOrders} new mock order
         {newOrders === 1 ? '' : 's'} waiting. Sound playback is intentionally not implemented yet.
       </div>
@@ -36,18 +37,11 @@ export function CounterDemoPage() {
   );
 }
 
-function SummaryCard({ label, value, tone }: { label: string; value: string; tone: 'amber' | 'sky' | 'emerald' }) {
-  const tones = {
-    amber: 'bg-amber-50 text-amber-800',
-    sky: 'bg-sky-50 text-sky-800',
-    emerald: 'bg-emerald-50 text-emerald-800',
-  };
-
+function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`rounded-lg border border-white p-5 shadow-sm ${tones[tone]}`}>
-      <p className="text-sm font-semibold uppercase tracking-wide opacity-80">{label}</p>
+    <div className="rounded-2xl border border-stone-800 bg-[#17110f] p-5 shadow-xl shadow-black/20">
+      <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">{label}</p>
       <p className="mt-2 text-3xl font-bold">{value}</p>
     </div>
   );
 }
-

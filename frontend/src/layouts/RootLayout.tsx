@@ -1,19 +1,15 @@
 import { Outlet } from 'react-router-dom';
 
-import { useAppConfig } from '../contexts/useAppConfig';
+import { SteakhouseLogo } from '../components/brand/SteakhouseLogo';
 
 export function RootLayout() {
-  const { appName } = useAppConfig();
-
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <span className="text-sm font-semibold uppercase tracking-wide text-slate-700">
-            {appName}
-          </span>
-          <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-            Foundation
+    <div className="min-h-screen bg-[#0b0908] text-stone-50">
+      <header className="border-b border-orange-900/40 bg-black">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-3 sm:px-4 sm:py-4">
+          <SteakhouseLogo compact />
+          <span className="rounded-full bg-orange-500/15 px-3 py-1 text-xs font-medium text-orange-200">
+            Demo
           </span>
         </div>
       </header>

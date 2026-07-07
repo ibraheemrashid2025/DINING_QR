@@ -1,132 +1,133 @@
-import { AdminMenuRow, MenuCategory, MenuItem, MockOrder } from '../types/demo';
+import { AdminMenuRow, Branch, MenuCategory, MenuItem, MockOrder, RestaurantTable } from '../types/demo';
 
 export const restaurantProfile = {
-  name: 'Casa Lumiere',
-  tagline: 'Modern dining, effortless table ordering.',
-  location: 'Gulberg, Lahore',
+  name: 'Ember & Oak Grill',
+  tagline: 'Flame-grilled steaks, stacked burgers, and table-side ordering with a premium edge.',
+  location: 'Main Branch',
   rating: 4.8,
   heroImage:
-    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80',
+    'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1800&q=85',
 };
 
 export const menuCategories: MenuCategory[] = [
-  { id: 'signature', name: 'Signature' },
-  { id: 'mains', name: 'Mains' },
-  { id: 'pizza', name: 'Pizza' },
-  { id: 'desserts', name: 'Desserts' },
+  { id: 'steaks', name: 'Steaks' },
+  { id: 'burgers', name: 'Burgers' },
+  { id: 'appetizers', name: 'Appetizers' },
+  { id: 'pasta', name: 'Pasta' },
   { id: 'drinks', name: 'Drinks' },
 ];
 
 export const menuItems: MenuItem[] = [
   {
-    id: 'truffle-pasta',
-    name: 'Truffle Alfredo Pasta',
-    categoryId: 'signature',
-    description: 'Creamy parmesan sauce, wild mushrooms, basil oil, and black truffle.',
+    id: 'ribeye-flame',
+    name: 'Charred Ribeye Steak',
+    categoryId: 'steaks',
+    description: 'Ribeye seared over open flame with smoked butter, sea salt, and roasted garlic.',
+    price: 3950,
+    imageUrl:
+      'https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
+    isPopular: true,
+  },
+  {
+    id: 'peppercorn-filet',
+    name: 'Peppercorn Filet',
+    categoryId: 'steaks',
+    description: 'Tender filet with cracked pepper crust, cream jus, and grilled seasonal greens.',
+    price: 4250,
+    imageUrl:
+      'https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
+    isNew: true,
+  },
+  {
+    id: 'ember-burger',
+    name: 'Ember Double Burger',
+    categoryId: 'burgers',
+    description: 'Two smashed beef patties, molten cheddar, caramelized onions, and ember sauce.',
     price: 1850,
     imageUrl:
-      'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=900&q=80',
-    isPopular: true,
-  },
-  {
-    id: 'smash-burger',
-    name: 'Double Smash Burger',
-    categoryId: 'mains',
-    description: 'Two seared beef patties, cheddar, caramelized onions, and house sauce.',
-    price: 1650,
-    imageUrl:
       'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
+    isAvailable: true,
     isPopular: true,
   },
   {
-    id: 'margherita',
-    name: 'Wood-Fired Margherita',
-    categoryId: 'pizza',
-    description: 'San Marzano tomato, mozzarella, fresh basil, and olive oil.',
-    price: 1450,
+    id: 'smoked-brisket-burger',
+    name: 'Smoked Brisket Burger',
+    categoryId: 'burgers',
+    description: 'Ground beef patty, smoked brisket, pickles, aged cheese, and toasted brioche.',
+    price: 2150,
     imageUrl:
-      'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
     isNew: true,
   },
   {
-    id: 'grilled-salmon',
-    name: 'Citrus Grilled Salmon',
-    categoryId: 'mains',
-    description: 'Herb rice, grilled vegetables, lemon butter, and micro greens.',
-    price: 2450,
+    id: 'fire-wings',
+    name: 'Fire Roasted Wings',
+    categoryId: 'appetizers',
+    description: 'Charred chicken wings tossed in warm chili glaze with ranch crema.',
+    price: 1250,
     imageUrl:
-      'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
   },
   {
-    id: 'lava-cake',
-    name: 'Molten Lava Cake',
-    categoryId: 'desserts',
-    description: 'Warm chocolate cake with vanilla bean ice cream and berries.',
-    price: 850,
+    id: 'loaded-fries',
+    name: 'Loaded Steak Fries',
+    categoryId: 'appetizers',
+    description: 'Crisp fries layered with steak bites, cheese sauce, jalapenos, and scallions.',
+    price: 1150,
     imageUrl:
-      'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1639024471283-03518883512d?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
     isPopular: true,
   },
   {
-    id: 'berry-cooler',
-    name: 'Berry Mint Cooler',
-    categoryId: 'drinks',
-    description: 'Mixed berries, fresh mint, lime, and sparkling water.',
-    price: 520,
+    id: 'smoked-alfredo',
+    name: 'Smoked Chicken Alfredo',
+    categoryId: 'pasta',
+    description: 'Creamy parmesan pasta with smoked chicken, mushrooms, and chili oil.',
+    price: 1950,
     imageUrl:
-      'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
+  },
+  {
+    id: 'citrus-smoke',
+    name: 'Citrus Smoke Cooler',
+    categoryId: 'drinks',
+    description: 'Orange, lime, mint, smoked salt rim, and sparkling soda over crushed ice.',
+    price: 650,
+    imageUrl:
+      'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=85',
+    isAvailable: true,
     isNew: true,
   },
 ];
 
-export const mockOrders: MockOrder[] = [
+export const restaurantTables: RestaurantTable[] = [
+  { id: 'table_1', number: 1, seats: 2, branchId: 'main_branch' },
+  { id: 'table_2', number: 2, seats: 4, branchId: 'main_branch' },
+];
+
+export const branches: Branch[] = [
   {
-    id: 'ORD-1048',
-    tableNumber: 5,
-    status: 'new',
-    createdAt: '2 min ago',
-    notes: 'No onions in the burger.',
-    items: [
-      { id: 'smash-burger', name: 'Double Smash Burger', quantity: 2 },
-      { id: 'berry-cooler', name: 'Berry Mint Cooler', quantity: 2 },
-    ],
-  },
-  {
-    id: 'ORD-1047',
-    tableNumber: 9,
-    status: 'accepted',
-    createdAt: '7 min ago',
-    notes: 'Serve dessert after mains.',
-    items: [
-      { id: 'truffle-pasta', name: 'Truffle Alfredo Pasta', quantity: 1 },
-      { id: 'lava-cake', name: 'Molten Lava Cake', quantity: 1 },
-    ],
-  },
-  {
-    id: 'ORD-1046',
-    tableNumber: 3,
-    status: 'preparing',
-    createdAt: '12 min ago',
-    items: [
-      { id: 'margherita', name: 'Wood-Fired Margherita', quantity: 1 },
-      { id: 'grilled-salmon', name: 'Citrus Grilled Salmon', quantity: 1 },
-    ],
-  },
-  {
-    id: 'ORD-1045',
-    tableNumber: 12,
-    status: 'ready',
-    createdAt: '18 min ago',
-    notes: 'Guest requested extra cutlery.',
-    items: [{ id: 'truffle-pasta', name: 'Truffle Alfredo Pasta', quantity: 2 }],
+    id: 'main_branch',
+    name: 'Main Branch',
+    location: 'Main Dining Floor',
+    manager: 'Ayesha Khan',
+    phone: '+92 300 1111111',
   },
 ];
+
+export const mockOrders: MockOrder[] = [];
 
 export const adminMenuRows: AdminMenuRow[] = [
-  { id: 'M-01', name: 'Truffle Alfredo Pasta', category: 'Signature', price: 1850, availability: 'Available' },
-  { id: 'M-02', name: 'Double Smash Burger', category: 'Mains', price: 1650, availability: 'Available' },
-  { id: 'M-03', name: 'Wood-Fired Margherita', category: 'Pizza', price: 1450, availability: 'Low stock' },
-  { id: 'M-04', name: 'Molten Lava Cake', category: 'Desserts', price: 850, availability: 'Paused' },
+  { id: 'M-01', name: 'Charred Ribeye Steak', category: 'Steaks', price: 3950, availability: 'Available' },
+  { id: 'M-02', name: 'Ember Double Burger', category: 'Burgers', price: 1850, availability: 'Available' },
+  { id: 'M-03', name: 'Loaded Steak Fries', category: 'Appetizers', price: 1150, availability: 'Low stock' },
+  { id: 'M-04', name: 'Smoked Chicken Alfredo', category: 'Pasta', price: 1950, availability: 'Available' },
 ];
 
 export const adminStats = [
@@ -135,4 +136,3 @@ export const adminStats = [
   { label: 'Avg. prep time', value: '14m', change: '-2m' },
   { label: 'Demo revenue', value: 'Rs 286k', change: '+12%' },
 ];
-

@@ -1,11 +1,11 @@
 import { OrderStatus } from '../../types/demo';
 
 const statusStyles: Record<OrderStatus, string> = {
-  new: 'bg-amber-100 text-amber-800 ring-amber-200',
-  accepted: 'bg-sky-100 text-sky-800 ring-sky-200',
-  preparing: 'bg-indigo-100 text-indigo-800 ring-indigo-200',
-  ready: 'bg-emerald-100 text-emerald-800 ring-emerald-200',
-  completed: 'bg-slate-100 text-slate-700 ring-slate-200',
+  new: 'bg-orange-500/15 text-orange-200 ring-orange-500/30',
+  accepted: 'bg-red-500/15 text-red-200 ring-red-500/30',
+  preparing: 'bg-amber-500/15 text-amber-200 ring-amber-500/30',
+  ready: 'bg-emerald-500/15 text-emerald-200 ring-emerald-500/30',
+  completed: 'bg-stone-500/15 text-stone-300 ring-stone-500/30',
 };
 
 export function StatusBadge({ status }: { status: OrderStatus }) {
@@ -15,4 +15,3 @@ export function StatusBadge({ status }: { status: OrderStatus }) {
     </span>
   );
 }
-

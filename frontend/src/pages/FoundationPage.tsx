@@ -1,54 +1,46 @@
 import { motion } from 'framer-motion';
-
-import { useHealthCheck } from '../hooks/useHealthCheck';
+import { Link } from 'react-router-dom';
 
 export function FoundationPage() {
-  const healthQuery = useHealthCheck();
-  const status = healthQuery.data?.status ?? 'checking';
-
   return (
     <motion.section
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-3xl"
+      className="mx-auto max-w-4xl"
       initial={{ opacity: 0, y: 12 }}
       transition={{ duration: 0.25 }}
     >
-      <p className="mb-3 text-sm font-medium uppercase tracking-wide text-emerald-700">
-        Production foundation
-      </p>
-      <h1 className="text-4xl font-bold tracking-tight text-slate-950">
-        Restaurant QR Ordering Platform
-      </h1>
-      <p className="mt-4 text-lg leading-8 text-slate-700">
-        Core application infrastructure is wired for React, routing, server state,
-        API communication, Express, Prisma, Socket.IO, validation, security, and
-        deployment-ready configuration.
-      </p>
+      <div className="text-center">
+        <p className="mb-3 text-sm font-medium uppercase tracking-[0.28em] text-orange-300">
+          Restaurant ordering
+        </p>
+        <h1 className="text-4xl font-black tracking-tight text-stone-50 sm:text-6xl">
+          Scan the QR code on your table to order
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-stone-300">
+          Each table has its own printed QR code. Scanning it opens the secure menu link for that
+          table directly, without asking customers to select or edit a table number.
+        </p>
+      </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-slate-200 bg-white p-5">
-          <h2 className="font-semibold text-slate-950">Frontend</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Vite, React, TypeScript, Tailwind CSS, React Router, TanStack Query,
-            Axios, and Framer Motion are configured.
-          </p>
-        </div>
-        <div className="rounded-lg border border-slate-200 bg-white p-5">
-          <h2 className="font-semibold text-slate-950">Backend</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Express, Prisma MySQL, Socket.IO, Helmet, CORS, Morgan, rate limiting,
-            JWT, bcrypt, Zod, and centralized errors are configured.
-          </p>
+      <div className="mt-8 rounded-2xl border border-stone-800 bg-[#17110f] p-6 shadow-xl shadow-black/20">
+        <h2 className="text-xl font-bold text-stone-50">How it works</h2>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {['Scan printed QR', 'Order from the table menu', 'Kitchen receives the ticket'].map((step) => (
+            <div className="rounded-xl bg-black/30 p-4" key={step}>
+              <p className="font-semibold text-stone-100">{step}</p>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="mt-6 rounded-lg border border-slate-200 bg-white p-5">
-        <h2 className="font-semibold text-slate-950">API Health</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          Status: <span className="font-medium text-slate-950">{status}</span>
-        </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <Link className="rounded-full bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-orange-950/30" to="/admin/dashboard">
+          Admin Dashboard
+        </Link>
+        <Link className="rounded-full border border-stone-700 bg-[#17110f] px-4 py-2 text-sm font-semibold text-stone-200" to="/kitchen">
+          Kitchen Dashboard
+        </Link>
       </div>
     </motion.section>
   );
 }
-

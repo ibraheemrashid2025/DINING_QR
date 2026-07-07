@@ -3,15 +3,16 @@ import { useState } from 'react';
 
 import { DashboardShell } from '../components/demo/DashboardShell';
 import { OrderCard } from '../components/demo/OrderCard';
-import { mockOrders } from '../data/mockData';
+import { getDemoOrders, updateDemoOrderStatus } from '../data/mockOrderStorage';
 import { MockOrder, OrderStatus } from '../types/demo';
 
 export function KitchenDemoPage() {
   const [orders, setOrders] = useState<MockOrder[]>(
-    mockOrders.filter((order) => order.status !== 'completed'),
+    () => getDemoOrders().filter((order) => order.status !== 'completed'),
   );
 
   const updateStatus = (orderId: string, status: OrderStatus) => {
+    updateDemoOrderStatus(orderId, status);
     setOrders((current) =>
       current.map((order) => (order.id === orderId ? { ...order, status } : order)),
     );
@@ -19,7 +20,7 @@ export function KitchenDemoPage() {
 
   return (
     <DashboardShell eyebrow="Kitchen display" title="Prep Queue">
-      <div className="mb-6 grid gap-4 rounded-lg border border-orange-200 bg-orange-50 p-4 text-orange-950 sm:grid-cols-3">
+      <div className="mb-6 grid gap-4 rounded-2xl border border-orange-800/50 bg-orange-500/10 p-4 text-orange-100 sm:grid-cols-3">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide">Active tickets</p>
           <p className="mt-2 text-3xl font-bold">{orders.length}</p>
@@ -43,4 +44,3 @@ export function KitchenDemoPage() {
     </DashboardShell>
   );
 }
-
