@@ -41,7 +41,13 @@ This phase intentionally contains infrastructure only. It does not include resta
 
 - Node.js 20+
 - npm 10+
-- MySQL, locally available through XAMPP/phpMyAdmin or hosted for deployment
+- PostgreSQL 14+ locally or hosted
+
+## PostgreSQL Options
+
+- Neon: recommended for Vercel-style deployments and serverless PostgreSQL.
+- Railway: useful when hosting the backend and database together.
+- Supabase: useful if future auth, storage, or realtime features are needed.
 
 ## Setup
 
@@ -49,9 +55,18 @@ This phase intentionally contains infrastructure only. It does not include resta
 npm install
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env
+npm run prisma:migrate --workspace backend
 npm run prisma:generate --workspace backend
 npm run dev
 ```
+
+Use a PostgreSQL connection string in `backend/.env`:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public
+```
+
+For local development, create a PostgreSQL database first, then run the Prisma migration command above.
 
 ## Build
 
@@ -64,4 +79,3 @@ npm run build
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:5000`
 - Backend health endpoint: `http://localhost:5000/api/health`
-

@@ -3,8 +3,180 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+}
+
+enum MenuItemAvailability {
+  AVAILABLE
+  UNAVAILABLE
+}
+
+enum TableStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  INACTIVE
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  fullName     String
+  email        String     @unique
+  passwordHash String
+  phone        String?
+  status       UserStatus @default(ACTIVE)
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  roleId       String
+  restaurantId String?
+  branchId     String?
+
+  role       Role        @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  restaurant Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: SetNull)
+  branch     Branch?     @relation(fields: [branchId], references: [id], onDelete: SetNull)
+
+  @@index([roleId])
+  @@index([restaurantId])
+  @@index([branchId])
+  @@map("users")
+}
+
+model Restaurant {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  description String?
+  phone       String?
+  email       String?
+  address     String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  branches   Branch[]
+  categories Category[]
+  menuItems  MenuItem[]
+  users      User[]
+
+  @@index([slug])
+  @@map("restaurants")
+}
+
+model Branch {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String
+  address   String
+  phone     String?
+  city      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  restaurantId String
+
+  restaurant Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tables     RestaurantTable[]
+  menuItems  MenuItem[]
+  users      User[]
+
+  @@unique([restaurantId, slug])
+  @@index([restaurantId])
+  @@map("branches")
+}
+
+model RestaurantTable {
+  id        String      @id @default(uuid())
+  number    Int
+  label     String?
+  seats     Int         @default(2)
+  qrCodeUrl String?
+  status    TableStatus @default(AVAILABLE)
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  branchId String
+
+  branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@unique([branchId, number])
+  @@index([branchId])
+  @@index([status])
+  @@map("restaurant_tables")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String
+  description String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  restaurantId String
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  menuItems  MenuItem[]
+
+  @@unique([restaurantId, slug])
+  @@index([restaurantId])
+  @@index([sortOrder])
+  @@map("categories")
+}
+
+model MenuItem {
+  id           String               @id @default(uuid())
+  name         String
+  slug         String
+  description  String
+  price        Decimal              @db.Decimal(10, 2)
+  imageUrl     String?
+  availability MenuItemAvailability @default(AVAILABLE)
+  isPopular    Boolean              @default(false)
+  isNew        Boolean              @default(false)
+  isActive     Boolean              @default(true)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+
+  restaurantId String
+  categoryId   String
+  branchId     String?
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  category   Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  branch     Branch?    @relation(fields: [branchId], references: [id], onDelete: SetNull)
+
+  @@unique([restaurantId, slug])
+  @@index([restaurantId])
+  @@index([categoryId])
+  @@index([branchId])
+  @@index([availability])
+  @@map("menu_items")
 }
 
 model SystemEvent {
