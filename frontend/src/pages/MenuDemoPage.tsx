@@ -73,7 +73,7 @@ export function MenuDemoPage() {
 
     saveDemoOrder({
       id: `ORD-${Date.now().toString().slice(-6)}`,
-      tableId: tableToken.tableId,
+      tableId: tableToken.id,
       tableNumber: tableToken.tableNumber,
       branchId: tableToken.branchId,
       branchName: tableToken.branchName,

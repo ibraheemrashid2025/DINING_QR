@@ -10,7 +10,13 @@ import { useAdminMock } from '../../contexts/useAdminMock';
 import { getDemoMenuPath, getDemoQrImageUrl, mockTableTokens } from '../../data/mockTableTokens';
 import { RestaurantTable } from '../../types/demo';
 
-const emptyTable: RestaurantTable = { id: '', number: 1, seats: 2, branchId: '' };
+const emptyTable: RestaurantTable = {
+  id: '',
+  tableNumber: 1,
+  seats: 2,
+  branchId: '',
+  qrToken: '',
+};
 
 export function AdminTablesPage() {
   const { addTable, branches, deleteTable, notify, tables, updateTable } = useAdminMock();
@@ -22,9 +28,15 @@ export function AdminTablesPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const openCreate = () => {
-    const nextNumber = Math.max(0, ...tables.map((table) => table.number)) + 1;
+    const nextNumber = Math.max(0, ...tables.map((table) => table.tableNumber)) + 1;
     setEditing(null);
-    setForm({ id: '', number: nextNumber, seats: 2, branchId: branches[0]?.id ?? '' });
+    setForm({
+      id: '',
+      tableNumber: nextNumber,
+      seats: 2,
+      branchId: branches[0]?.id ?? '',
+      qrToken: crypto.randomUUID(),
+    });
     setIsModalOpen(true);
   };
 
@@ -46,9 +58,10 @@ export function AdminTablesPage() {
     window.setTimeout(() => {
       const table = {
         ...form,
-        id: editing?.id ?? `table-${form.number}`,
-        number: Number(form.number),
+        id: editing?.id ?? `table_${form.tableNumber}`,
+        tableNumber: Number(form.tableNumber),
         seats: Number(form.seats),
+        qrToken: editing?.qrToken ?? (form.qrToken || crypto.randomUUID()),
       };
       if (editing) {
         updateTable(table);
@@ -123,33 +136,34 @@ export function AdminTablesPage() {
         {tables.map((table) => (
           <AdminCard key={table.id}>
             {(() => {
-              const token = mockTableTokens.find((tableToken) => tableToken.tableNumber === table.number);
-              const menuPath = token ? getDemoMenuPath(token.qrToken) : '';
-              const qrImageUrl = token ? getDemoQrImageUrl(origin, token.qrToken) : '';
+              const registryTable = mockTableTokens.find((tableToken) => tableToken.id === table.id);
+              const qrToken = registryTable?.qrToken ?? table.qrToken;
+              const menuPath = qrToken ? getDemoMenuPath(qrToken) : '';
+              const qrImageUrl = qrToken ? getDemoQrImageUrl(origin, qrToken) : '';
               return (
                 <>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">Table Number</p>
-                      <h3 className="text-3xl font-bold text-stone-50">{table.number}</h3>
+                      <h3 className="text-3xl font-bold text-stone-50">{table.tableNumber}</h3>
                       <p className="mt-1 text-sm text-stone-400">{table.seats} seats</p>
                     </div>
-                    <QrPreview imageUrl={qrImageUrl || undefined} tableNumber={table.number} />
+                    <QrPreview imageUrl={qrImageUrl || undefined} tableNumber={table.tableNumber} />
                   </div>
                   <p className="mt-4 break-all rounded-xl bg-black/30 p-3 text-sm text-stone-300">
-                    QR URL: {token ? menuPath : 'Token not generated in demo data'}
+                    QR URL: {qrToken ? menuPath : 'Token not generated in demo data'}
                   </p>
                   <div className="mt-4 flex flex-wrap gap-2">
                     <AdminButton
-                      disabled={!token}
-                      onClick={() => downloadQr(table.number, qrImageUrl)}
+                      disabled={!qrToken}
+                      onClick={() => downloadQr(table.tableNumber, qrImageUrl)}
                       variant="secondary"
                     >
                       Download QR
                     </AdminButton>
                     <AdminButton
-                      disabled={!token}
-                      onClick={() => printQr(table.number, qrImageUrl, menuPath)}
+                      disabled={!qrToken}
+                      onClick={() => printQr(table.tableNumber, qrImageUrl, menuPath)}
                       variant="secondary"
                     >
                       Print QR
@@ -171,7 +185,7 @@ export function AdminTablesPage() {
       <AdminModal isOpen={isModalOpen} onClose={closeModal} title={editing ? 'Edit Table' : 'Create Table'}>
         <form className="grid gap-4" onSubmit={submit}>
           <div className="grid gap-4 sm:grid-cols-2">
-            <NumberInput label="Table Number" onChange={(value) => setForm((current) => ({ ...current, number: value }))} value={form.number} />
+            <NumberInput label="Table Number" onChange={(value) => setForm((current) => ({ ...current, tableNumber: value }))} value={form.tableNumber} />
             <NumberInput label="Seats" onChange={(value) => setForm((current) => ({ ...current, seats: value }))} value={form.seats} />
           </div>
           <label className="block text-sm font-semibold text-stone-300">
@@ -191,14 +205,14 @@ export function AdminTablesPage() {
           <div className="rounded-2xl bg-black/30 p-4 text-center">
             <QrPreview
               imageUrl={
-                mockTableTokens.find((tableToken) => tableToken.tableNumber === form.number)
+                mockTableTokens.find((tableToken) => tableToken.id === form.id || tableToken.tableNumber === form.tableNumber) ?? form.qrToken
                   ? getDemoQrImageUrl(
                       origin,
-                      mockTableTokens.find((tableToken) => tableToken.tableNumber === form.number)?.qrToken ?? '',
+                      mockTableTokens.find((tableToken) => tableToken.id === form.id || tableToken.tableNumber === form.tableNumber)?.qrToken ?? form.qrToken,
                     )
                   : undefined
               }
-              tableNumber={form.number}
+              tableNumber={form.tableNumber}
             />
             <p className="mt-3 text-sm font-semibold text-stone-300">Auto-generated QR preview</p>
           </div>
@@ -213,7 +227,7 @@ export function AdminTablesPage() {
 
       <ConfirmDialog
         isOpen={deleting !== null}
-        message={`Delete table ${deleting?.number ?? ''} from mock data?`}
+        message={`Delete table ${deleting?.tableNumber ?? ''} from mock data?`}
         onCancel={() => setDeleting(null)}
         onConfirm={confirmDelete}
         title="Delete Table"

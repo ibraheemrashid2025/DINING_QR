@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import { SteakhouseLogo } from '../brand/SteakhouseLogo';
+import { defaultDemoQrToken } from '../../data/mockTableTokens';
 
 type DashboardShellProps = {
   title: string;
@@ -11,7 +12,7 @@ type DashboardShellProps = {
 };
 
 const navItems = [
-  { label: 'Menu', to: '/menu/t/demo-table-1' },
+  { label: 'Menu', to: `/menu/t/${defaultDemoQrToken}` },
   { label: 'Counter', to: '/counter' },
   { label: 'Kitchen', to: '/kitchen' },
   { label: 'Admin', to: '/admin' },

@@ -17,17 +17,18 @@ export type MenuItem = {
 
 export type RestaurantTable = {
   id: string;
-  number: number;
+  tableNumber: number;
   seats: number;
   branchId: string;
+  qrToken: string;
 };
 
 export type MockTableToken = {
+  id: string;
   qrToken: string;
   restaurantName: string;
   branchName: string;
   tableNumber: number;
-  tableId: string;
   branchId: string;
 };
 

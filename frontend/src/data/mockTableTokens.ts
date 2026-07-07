@@ -1,20 +1,22 @@
 import { MockTableToken } from '../types/demo';
 
+export const defaultDemoQrToken = '7fd2a9c1-6d8b-4f2b-a8c4-f91e6d12e3ab';
+
 export const mockTableTokens: MockTableToken[] = [
   {
-    qrToken: 'demo-table-1',
+    id: 'table_1',
+    qrToken: defaultDemoQrToken,
     restaurantName: 'Ember & Oak Grill',
     branchName: 'Main Branch',
     tableNumber: 1,
-    tableId: 'table_1',
     branchId: 'main_branch',
   },
   {
-    qrToken: 'demo-table-2',
+    id: 'table_2',
+    qrToken: 'e15b8fd7-7b12-4dc9-9178-9d5e2d9f4a61',
     restaurantName: 'Ember & Oak Grill',
     branchName: 'Main Branch',
     tableNumber: 2,
-    tableId: 'table_2',
     branchId: 'main_branch',
   },
 ];

@@ -1,3 +1,4 @@
+import { defaultDemoQrToken } from './mockTableTokens';
 import { AdminMenuRow, Branch, MenuCategory, MenuItem, MockOrder, RestaurantTable } from '../types/demo';
 
 export const restaurantProfile = {
@@ -107,8 +108,20 @@ export const menuItems: MenuItem[] = [
 ];
 
 export const restaurantTables: RestaurantTable[] = [
-  { id: 'table_1', number: 1, seats: 2, branchId: 'main_branch' },
-  { id: 'table_2', number: 2, seats: 4, branchId: 'main_branch' },
+  {
+    id: 'table_1',
+    tableNumber: 1,
+    seats: 2,
+    branchId: 'main_branch',
+    qrToken: defaultDemoQrToken,
+  },
+  {
+    id: 'table_2',
+    tableNumber: 2,
+    seats: 4,
+    branchId: 'main_branch',
+    qrToken: 'e15b8fd7-7b12-4dc9-9178-9d5e2d9f4a61',
+  },
 ];
 
 export const branches: Branch[] = [

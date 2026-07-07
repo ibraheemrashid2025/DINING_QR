@@ -13,11 +13,12 @@ import { AdminCategoriesPage } from '../pages/admin/AdminCategoriesPage';
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
 import { AdminMenuPage } from '../pages/admin/AdminMenuPage';
 import { AdminTablesPage } from '../pages/admin/AdminTablesPage';
+import { defaultDemoQrToken } from '../data/mockTableTokens';
 
 export function AppRouter() {
   return (
     <Routes>
-      <Route element={<Navigate replace to="/menu/t/demo-table-1" />} path="/menu" />
+      <Route element={<Navigate replace to={`/menu/t/${defaultDemoQrToken}`} />} path="/menu" />
       <Route element={<MenuDemoPage />} path="/menu/t/:qrToken" />
       <Route element={<CounterDemoPage />} path="/counter" />
       <Route element={<KitchenDemoPage />} path="/kitchen" />
