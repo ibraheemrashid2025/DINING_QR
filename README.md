@@ -114,7 +114,7 @@ JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 BCRYPT_SALT_ROUNDS=12
 RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
+RATE_LIMIT_MAX_REQUESTS=3000
 ```
 
 Use a production PostgreSQL database URL from Render PostgreSQL, Railway PostgreSQL, Neon, Supabase, or another managed PostgreSQL provider. The Prisma schema is configured for PostgreSQL.
