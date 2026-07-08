@@ -15,6 +15,10 @@ const userWithRoleArgs = {
 
 type UserWithRole = Prisma.UserGetPayload<typeof userWithRoleArgs>;
 
+function logLoginStep(message: string, metadata?: Record<string, unknown>) {
+  console.info('[auth:login]', message, metadata ?? {});
+}
+
 function toAuthUser(user: UserWithRole): AuthUser {
   return {
     id: user.id,
@@ -27,6 +31,11 @@ function toAuthUser(user: UserWithRole): AuthUser {
 }
 
 function createTokens(user: AuthUser): AuthTokens {
+  logLoginStep('JWT sign step reached', {
+    userId: user.id,
+    role: user.role,
+  });
+
   return {
     accessToken: signToken({ sub: user.id, role: user.role, tokenType: 'access' }, 'access'),
     refreshToken: signToken({ sub: user.id, role: user.role, tokenType: 'refresh' }, 'refresh'),
@@ -48,9 +57,15 @@ async function findActiveUserById(userId: string) {
 }
 
 export async function loginWithPassword(email: string, password: string) {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  logLoginStep('email being searched', {
+    email: normalizedEmail,
+  });
+
   const user = await prisma.user.findFirst({
     where: {
-      email: email.toLowerCase(),
+      email: normalizedEmail,
       isActive: true,
       status: 'ACTIVE',
       role: {
@@ -60,11 +75,26 @@ export async function loginWithPassword(email: string, password: string) {
     ...userWithRoleArgs,
   });
 
+  logLoginStep('user lookup completed', {
+    email: normalizedEmail,
+    userFound: user !== null,
+    roleRelationExists: Boolean(user?.role),
+  });
+
   if (!user) {
     throw new AppError('Invalid email or password', HttpStatus.UNAUTHORIZED);
   }
 
+  if (!user.role) {
+    throw new AppError('User role is not configured', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
   const isPasswordValid = await comparePassword(password, user.passwordHash);
+
+  logLoginStep('bcrypt compare completed', {
+    email: normalizedEmail,
+    isPasswordValid,
+  });
 
   if (!isPasswordValid) {
     throw new AppError('Invalid email or password', HttpStatus.UNAUTHORIZED);

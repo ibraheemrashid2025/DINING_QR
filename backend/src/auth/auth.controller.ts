@@ -8,12 +8,34 @@ import { AuthenticatedRequest } from './auth.types';
 
 export const login = asyncHandler(async (request: Request, response: Response) => {
   const { email, password } = request.body as { email: string; password: string };
-  const authResult = await loginWithPassword(email, password);
 
-  return response.status(HttpStatus.OK).json({
-    data: authResult,
-    message: 'Login successful',
+  console.info('[auth:login]', 'login request received', {
+    email: email.trim().toLowerCase(),
   });
+
+  try {
+    const authResult = await loginWithPassword(email, password);
+
+    return response.status(HttpStatus.OK).json({
+      data: authResult,
+      message: 'Login successful',
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown login error';
+    const stack = error instanceof Error ? error.stack : undefined;
+
+    console.error('[auth:login]', 'login failed', {
+      email: email.trim().toLowerCase(),
+      message,
+      stack,
+    });
+
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new AppError('Internal server error', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 });
 
 export const logout = asyncHandler(async (_request: Request, response: Response) => {
