@@ -4,6 +4,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { SteakhouseLogo } from '../components/brand/SteakhouseLogo';
 import { ToastStack } from '../components/admin/ToastStack';
 import { AdminMockProvider } from '../contexts/AdminMockContext';
+import { useAuth } from '../contexts/useAuth';
 
 const adminNavItems = [
   { label: 'Dashboard', to: '/admin/dashboard' },
@@ -25,6 +26,8 @@ export function AdminLayout() {
 }
 
 function AdminFrame({ children }: { children: ReactNode }) {
+  const { logout, user } = useAuth();
+
   return (
     <div className="min-h-screen bg-[#0b0908] text-stone-50 lg:flex">
       <aside className="border-b border-orange-900/40 bg-black p-3 text-white sm:p-4 lg:sticky lg:top-0 lg:min-h-screen lg:w-72 lg:border-b-0">
@@ -55,11 +58,22 @@ function AdminFrame({ children }: { children: ReactNode }) {
               <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">
                 Mock data workspace
               </p>
-              <p className="text-sm text-stone-400">Frontend-only admin functionality</p>
+              <p className="text-sm text-stone-400">
+                {user ? `${user.fullName} / ${user.role}` : 'Frontend-only admin functionality'}
+              </p>
             </div>
-            <select className="rounded-full border border-stone-700 bg-[#17110f] px-4 py-2 text-sm font-semibold text-stone-200">
-              <option>Main Branch</option>
-            </select>
+            <div className="flex flex-wrap items-center gap-2">
+              <select className="rounded-full border border-stone-700 bg-[#17110f] px-4 py-2 text-sm font-semibold text-stone-200">
+                <option>Main Branch</option>
+              </select>
+              <button
+                className="rounded-full border border-stone-700 bg-[#17110f] px-4 py-2 text-sm font-semibold text-stone-200 hover:border-orange-500"
+                onClick={() => void logout()}
+                type="button"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </header>
         <main className="px-3 py-5 sm:px-6 sm:py-6 lg:px-8">{children}</main>

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 import { SteakhouseLogo } from '../brand/SteakhouseLogo';
+import { useAuth } from '../../contexts/useAuth';
 import { defaultDemoQrToken } from '../../data/mockTableTokens';
 
 type DashboardShellProps = {
@@ -19,6 +20,8 @@ const navItems = [
 ];
 
 export function DashboardShell({ title, eyebrow, children, sidebar = false }: DashboardShellProps) {
+  const { logout, user } = useAuth();
+
   if (sidebar) {
     return (
       <div className="min-h-screen bg-[#0b0908] text-stone-50 lg:flex">
@@ -41,7 +44,7 @@ export function DashboardShell({ title, eyebrow, children, sidebar = false }: Da
           </nav>
         </aside>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <Header eyebrow={eyebrow} title={title} />
+          <Header eyebrow={eyebrow} onLogout={logout} title={title} userLabel={user?.fullName} />
           {children}
         </main>
       </div>
@@ -68,21 +71,50 @@ export function DashboardShell({ title, eyebrow, children, sidebar = false }: Da
               </NavLink>
             ))}
           </nav>
+          <button
+            className="shrink-0 rounded-full border border-stone-700 bg-[#17110f] px-3 py-2 text-sm font-semibold text-stone-300 hover:border-orange-500"
+            onClick={() => void logout()}
+            type="button"
+          >
+            Logout
+          </button>
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-3 py-5 sm:px-4 sm:py-8">
-        <Header eyebrow={eyebrow} title={title} />
+        <Header eyebrow={eyebrow} title={title} userLabel={user?.fullName} />
         {children}
       </main>
     </div>
   );
 }
 
-function Header({ eyebrow, title }: { eyebrow: string; title: string }) {
+function Header({
+  eyebrow,
+  onLogout,
+  title,
+  userLabel,
+}: {
+  eyebrow: string;
+  onLogout?: () => Promise<void>;
+  title: string;
+  userLabel?: string;
+}) {
   return (
-    <div className="mb-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">{eyebrow}</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">{title}</h1>
+    <div className="mb-8 flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <p className="text-sm font-semibold uppercase tracking-wide text-orange-300">{eyebrow}</p>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-stone-50 sm:text-4xl">{title}</h1>
+        {userLabel ? <p className="mt-2 text-sm font-semibold text-stone-500">{userLabel}</p> : null}
+      </div>
+      {onLogout ? (
+        <button
+          className="rounded-full border border-stone-700 bg-[#17110f] px-4 py-2 text-sm font-semibold text-stone-300 hover:border-orange-500"
+          onClick={() => void onLogout()}
+          type="button"
+        >
+          Logout
+        </button>
+      ) : null}
     </div>
   );
 }

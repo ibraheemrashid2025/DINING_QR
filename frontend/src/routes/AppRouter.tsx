@@ -6,13 +6,17 @@ import { CounterDemoPage } from '../pages/CounterDemoPage';
 import { DemoPage } from '../pages/DemoPage';
 import { FoundationPage } from '../pages/FoundationPage';
 import { KitchenDemoPage } from '../pages/KitchenDemoPage';
+import { LoginPage } from '../pages/LoginPage';
 import { MenuDemoPage } from '../pages/MenuDemoPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { UnauthorizedPage } from '../pages/UnauthorizedPage';
 import { AdminBranchesPage } from '../pages/admin/AdminBranchesPage';
 import { AdminCategoriesPage } from '../pages/admin/AdminCategoriesPage';
 import { AdminDashboardPage } from '../pages/admin/AdminDashboardPage';
 import { AdminMenuPage } from '../pages/admin/AdminMenuPage';
 import { AdminTablesPage } from '../pages/admin/AdminTablesPage';
+import { adminRouteRoles, counterRouteRoles, kitchenRouteRoles } from './auth-routing';
+import { ProtectedRoute } from './ProtectedRoute';
 import { defaultDemoQrToken } from '../data/mockTableTokens';
 
 export function AppRouter() {
@@ -20,9 +24,32 @@ export function AppRouter() {
     <Routes>
       <Route element={<Navigate replace to={`/menu/t/${defaultDemoQrToken}`} />} path="/menu" />
       <Route element={<MenuDemoPage />} path="/menu/t/:qrToken" />
-      <Route element={<CounterDemoPage />} path="/counter" />
-      <Route element={<KitchenDemoPage />} path="/kitchen" />
-      <Route element={<AdminLayout />} path="/admin">
+      <Route element={<LoginPage />} path="/login" />
+      <Route element={<UnauthorizedPage />} path="/unauthorized" />
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={counterRouteRoles}>
+            <CounterDemoPage />
+          </ProtectedRoute>
+        }
+        path="/counter"
+      />
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={kitchenRouteRoles}>
+            <KitchenDemoPage />
+          </ProtectedRoute>
+        }
+        path="/kitchen"
+      />
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={adminRouteRoles}>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+        path="/admin"
+      >
         <Route element={<Navigate replace to="/admin/dashboard" />} index />
         <Route element={<AdminDashboardPage />} path="dashboard" />
         <Route element={<AdminCategoriesPage />} path="categories" />
